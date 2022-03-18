@@ -3,32 +3,8 @@ import got from 'got';
 import * as parser from 'fast-xml-parser';
 import { options } from '../constants/option/xml_parser_option';
 import { depart190 } from '../constants/depart190';
-import { checkHoliday, toKSTString } from '../constants/function/commonfunction';
-
-interface BusArriveInfo {
-  carNo1: number | string;
-  carNo2: number | string;
-  min1: number;
-  min2: number;
-  station1: number;
-  station2: number;
-  lowplate1: boolean;
-  lowplate2: boolean;
-}
-
-interface BusInfo {
-  carno: string;
-  gpsym: string;
-  lat: number;
-  lin: number;
-  nodeid: number;
-  bstopnm: string;
-}
-
-interface DepartmentInfo {
-  type: string;
-  time: string;
-}
+import { checkHoliday, toKSTString } from '../util/commonfunction';
+import { BusArriveInfo, BusInfo, DepartmentInfo } from '../model/bus';
 
 export class BusService {
   private readonly serviceKey =
@@ -84,18 +60,15 @@ export class BusService {
         JSON.stringify(jsonObj.response.body.items).length > 0
           ? jsonObj.response.body.items.item
           : {
-            carNo1: '차량 없음',
-            carNo2: '차량 없음',
-            min1: 999,
-            min2: 999,
-            station1: 999,
-            station2: 999,
-            lowplate1: false,
-            lowplate2: false,
-          };
-
-      console.log('item: ', item);
-
+              carNo1: '차량 없음',
+              carNo2: '차량 없음',
+              min1: 999,
+              min2: 999,
+              station1: 999,
+              station2: 999,
+              lowplate1: false,
+              lowplate2: false,
+            };
       const arriveInfo: BusArriveInfo = {
         carNo1: item.carNo1 || '차량 없음',
         carNo2: item.carNo2 || '차량 없음',
@@ -114,8 +87,8 @@ export class BusService {
   }
 
   public async getAllNode(): Promise<BusInfo[]> {
-    const url = 'http://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId?servicekey=R3BdsX99pQj7YTLiUWzWoPMqBWqfOMg9alf9pGA88lx3tknpA5uE04cl0nMrXiCt3X%2BlUzTJ1Mwa8qZAxO6eZA%3D%3D&lineid=5200190000';
-
+    const url =
+      'http://apis.data.go.kr/6260000/BusanBIMS/busInfoByRouteId?servicekey=R3BdsX99pQj7YTLiUWzWoPMqBWqfOMg9alf9pGA88lx3tknpA5uE04cl0nMrXiCt3X%2BlUzTJ1Mwa8qZAxO6eZA%3D%3D&lineid=5200190000';
 
     // var queryParams = '?' + 'ServiceKey' + '=' + this.serviceKey;
     // queryParams += '&' + 'lineid' + '=' + encodeURIComponent('5200190000');  */
@@ -128,7 +101,6 @@ export class BusService {
     const jsonObj = parser.convertToJson(tObj, options);
 
     const tmp = jsonObj.response.body.items.item || [];
-
 
     tmp.forEach(function (value: any) {
       if (value.lat && value.lin) {

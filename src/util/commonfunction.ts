@@ -1,4 +1,7 @@
-import { holiDay } from '../holiday';
+import { holiDay } from '../constants/holiday';
+
+export const HOUR_MILLISECOND = 60 * 60 * 1000;
+export const DAY_MILLISECOND = HOUR_MILLISECOND * 24;
 
 export function toKSTString(): string {
   const now = new Date();
@@ -39,8 +42,8 @@ export function checkHoliday(): boolean {
   return isHoliday;
 }
 
-export function makeKoreaDate(): Date {
+export function converToKoreaTime(): Date {
   const newDate = new Date();
-  newDate.setTime(newDate.getTime() + 9 * 60 * 60 * 1000);
+  newDate.setTime(newDate.getTime() + 9 * HOUR_MILLISECOND);
   return newDate;
 }
